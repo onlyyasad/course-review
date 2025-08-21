@@ -3,9 +3,7 @@ import { CategoryControllers } from './category.controller'
 
 const router = Router()
 
-router.get('/', (req, res) => {
-  res.send('Hello Category nested route')
-})
+router.get('/', CategoryControllers.getCategories)
 
 router.post('/', CategoryControllers.createCategory)
 
