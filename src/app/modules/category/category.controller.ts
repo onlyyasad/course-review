@@ -1,25 +1,30 @@
 import { Request, Response } from 'express'
 import { CategoryServices } from './category.service'
+import catchAsync from '../../utils/catchAsync'
+import sendResponse from '../../utils/sendResponse'
+import httpStatus from 'http-status'
 
-const getCategories = async (req: Request, res: Response) => {
+const getCategories = catchAsync(async (req: Request, res: Response) => {
   const result = await CategoryServices.getAllCategoriesFromDB()
-  res.send({
+  sendResponse(res, {
     success: true,
-    statusCode: 201,
+    statusCode: httpStatus.OK,
+    message: 'Categories retrieved successfully!',
     data: result,
   })
-}
+})
 
-const createCategory = async (req: Request, res: Response) => {
+const createCategory = catchAsync(async (req: Request, res: Response) => {
   const category = req.body
 
   const result = await CategoryServices.createCategoryIntoDB(category)
-  res.send({
+  sendResponse(res, {
     success: true,
+    statusCode: httpStatus.OK,
     message: 'Category created successfully!',
     data: result,
   })
-}
+})
 
 export const CategoryControllers = {
   getCategories,
