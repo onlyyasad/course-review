@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express'
 import cors from 'cors'
 import router from './app/routes'
+import notFound from './app/middlewares/notFound'
 
 const app = express()
 
@@ -17,5 +18,7 @@ const test = async (req: Request, res: Response) => {
 }
 
 app.get('/', test)
+
+app.use(notFound)
 
 export default app
