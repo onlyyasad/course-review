@@ -5,6 +5,8 @@ import { CourseController } from './course.controller'
 
 const router = Router()
 
+router.get('/', CourseController.getAllCourse)
+
 router.post(
   '/',
   validateRequest(CourseValidation.createCourseValidationSchema),

@@ -4,6 +4,17 @@ import catchAsync from '../../utils/catchAsync'
 import { CourseServices } from './course.service'
 import sendResponse from '../../utils/sendResponse'
 
+const getAllCourse = catchAsync(async (req: Request, res: Response) => {
+  const result = await CourseServices.getAllCourseFromDB()
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Courses retrieved successfully!',
+    data: result,
+  })
+})
+
 const createCourse = catchAsync(async (req: Request, res: Response) => {
   const course = req.body
 
@@ -18,5 +29,6 @@ const createCourse = catchAsync(async (req: Request, res: Response) => {
 })
 
 export const CourseController = {
+  getAllCourse,
   createCourse,
 }
