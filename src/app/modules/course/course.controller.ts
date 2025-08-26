@@ -5,13 +5,14 @@ import { CourseServices } from './course.service'
 import sendResponse from '../../utils/sendResponse'
 
 const getAllCourse = catchAsync(async (req: Request, res: Response) => {
-  const result = await CourseServices.getAllCourseFromDB()
+  const { meta, data } = await CourseServices.getAllCourseFromDB(req.query)
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: 'Courses retrieved successfully!',
-    data: result,
+    meta: meta,
+    data: data,
   })
 })
 
