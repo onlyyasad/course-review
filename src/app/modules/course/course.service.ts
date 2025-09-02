@@ -53,17 +53,21 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
     }
   }
 
+  if (tags) {
+    queryFilter.tags = { $elemMatch: { name: tags } }
+  }
+
   const result = await Course.find(queryFilter)
     .skip(skip)
     .limit(limit)
     .sort(sort)
-  const count = await Course.countDocuments()
+  const total = result.length
 
   const data = {
     meta: {
       page: page,
       limit: limit,
-      total: count,
+      total: total,
     },
     data: result,
   }
