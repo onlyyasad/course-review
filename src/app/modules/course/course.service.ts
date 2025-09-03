@@ -57,6 +57,42 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
     queryFilter.tags = { $elemMatch: { name: tags } }
   }
 
+  if (startDate) {
+    queryFilter.startDate = startDate
+  }
+
+  if (endDate) {
+    queryFilter.endDate = endDate
+  }
+
+  if (language) {
+    queryFilter.language = language
+  }
+
+  if (provider) {
+    queryFilter.provider = provider
+  }
+
+  if (level) {
+    queryFilter['details.level'] = level
+  }
+
+  if (durationInWeeks) {
+    queryFilter.$expr = {
+      $gte: [
+        {
+          $divide: [
+            {
+              $subtract: ['$endDate', '$startDate'],
+            },
+            1000 * 60 * 60 * 24 * 7,
+          ],
+        },
+        Number(durationInWeeks),
+      ],
+    }
+  }
+
   const result = await Course.find(queryFilter)
     .skip(skip)
     .limit(limit)
