@@ -81,12 +81,14 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
     queryFilter.$expr = {
       $gte: [
         {
-          $divide: [
-            {
-              $subtract: ['$endDate', '$startDate'],
-            },
-            1000 * 60 * 60 * 24 * 7,
-          ],
+          $ceil: {
+            $divide: [
+              {
+                $subtract: ['$endDate', '$startDate'],
+              },
+              1000 * 60 * 60 * 24 * 7,
+            ],
+          },
         },
         Number(durationInWeeks),
       ],
