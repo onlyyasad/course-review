@@ -7,6 +7,8 @@ const router = Router()
 
 router.get('/', CourseController.getAllCourse)
 
+router.get('/best', CourseController.getBestCourse)
+
 router.get('/:courseId/reviews', CourseController.getCourseWithReviews)
 
 router.post(
