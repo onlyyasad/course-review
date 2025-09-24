@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { courseSortableFields } from './course.constant'
 import { TCourse, TCourseUpdates, TTag } from './course.interface'
 import { Course } from './course.model'
@@ -157,8 +158,27 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   return result
 }
 
+const getCourseWithReviewsFromDB = async (id: string) => {
+  const courseId = new mongoose.Types.ObjectId(id)
+
+  const result = await Course.aggregate([
+    { $match: { _id: courseId } },
+    {
+      $lookup: {
+        from: 'reviews', // The name of the reviews collection
+        localField: '_id',
+        foreignField: 'courseId',
+        as: 'reviews',
+      },
+    },
+  ])
+
+  return result[0]
+}
+
 export const CourseServices = {
   getAllCourseFromDB,
   createCourseIntoDB,
   updateCourseIntoDB,
+  getCourseWithReviewsFromDB,
 }
