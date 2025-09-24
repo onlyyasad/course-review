@@ -1,5 +1,5 @@
 import { courseSortableFields } from './course.constant'
-import { TCourse } from './course.interface'
+import { TCourse, TCourseUpdates, TTag } from './course.interface'
 import { Course } from './course.model'
 
 const getAllCourseFromDB = async (query: Record<string, unknown>) => {
@@ -116,7 +116,49 @@ const createCourseIntoDB = async (payload: TCourse) => {
   return result
 }
 
+const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
+  const updatedData: Record<string, unknown> = payload
+
+  const updates: TCourseUpdates = {} as TCourseUpdates
+  const setUpdates: TCourse = {} as TCourse
+  const pushUpdates: { tags: TTag[] } = {} as { tags: TTag[] }
+
+  for (const key in updatedData) {
+    if (key === 'tags') {
+      // For array fields, use $push or $addToSet as needed
+      updates.$push = updates.$push || {}
+      updates.$push[key] = updatedData[key]
+    } else if (
+      typeof updatedData[key] === 'object' &&
+      updatedData[key] !== null &&
+      !Array.isArray(updatedData[key])
+    ) {
+      // For nested objects, use dot notation
+      const nestedObj = updatedData[key] as Record<string, unknown>
+      for (const nestedKey in nestedObj) {
+        updates.$set = updates.$set || {}
+        updates.$set[`${key}.${nestedKey}`] = nestedObj[nestedKey]
+      }
+    } else {
+      updates.$set = updates.$set || {}
+      updates.$set[key] = updatedData[key]
+    }
+  }
+
+  if (Object.keys(setUpdates).length) {
+    updates.$set = setUpdates
+  }
+
+  if (Object.keys(pushUpdates).length) {
+    updates.$push = pushUpdates
+  }
+
+  const result = await Course.findByIdAndUpdate(id, updates, { new: true })
+  return result
+}
+
 export const CourseServices = {
   getAllCourseFromDB,
   createCourseIntoDB,
+  updateCourseIntoDB,
 }

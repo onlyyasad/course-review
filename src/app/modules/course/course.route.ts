@@ -13,4 +13,10 @@ router.post(
   CourseController.createCourse,
 )
 
+router.put(
+  '/:courseId',
+  validateRequest(CourseValidation.updateCourseValidationSchema),
+  CourseController.updateCourse,
+)
+
 export const CourseRoutes = router

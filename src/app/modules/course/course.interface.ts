@@ -22,3 +22,8 @@ export type TCourse = {
   provider: string
   details: TDetails
 }
+
+export type TCourseUpdates = {
+  $set: Record<string, unknown>
+  $push: Record<string, unknown>
+}
