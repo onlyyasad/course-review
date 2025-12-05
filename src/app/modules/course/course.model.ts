@@ -68,6 +68,11 @@ const courseSchema = new Schema<TCourse>(
       required: true,
     },
     details: detailsSchema,
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
   {
     toJSON: { virtuals: true },
