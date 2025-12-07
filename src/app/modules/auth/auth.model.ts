@@ -1,6 +1,8 @@
 import { model, Schema } from 'mongoose'
 import { TPasswordHistory, TUser } from './auth.interface'
 import { USER_ROLES } from './auth.constant'
+import bcrypt from 'bcrypt'
+import config from '../../config'
 
 const userSchema = new Schema<TUser>(
   {
@@ -11,6 +13,19 @@ const userSchema = new Schema<TUser>(
   },
   { timestamps: true },
 )
+
+userSchema.pre('save', async function (next) {
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.bcrypt_salt_rounds),
+  )
+  next()
+})
+
+userSchema.post('save', function (doc, next) {
+  doc.password = ''
+  next()
+})
 
 const passwordHistorySchema = new Schema(
   {
