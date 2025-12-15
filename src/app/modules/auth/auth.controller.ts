@@ -3,6 +3,23 @@ import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import httpStatus from 'http-status'
 import { AuthService } from './auth.service'
+import { TLoginUser } from './auth.interface'
+
+const loginUser = catchAsync(async (req: Request, res: Response) => {
+  const loginData: TLoginUser = req.body
+
+  const result = await AuthService.loginUserInDB(loginData)
+  const { accessToken } = result
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User logged in successfully',
+    data: {
+      accessToken,
+    },
+  })
+})
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const user = req.body
@@ -18,5 +35,6 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
 })
 
 export const AuthController = {
+  loginUser,
   createUser,
 }

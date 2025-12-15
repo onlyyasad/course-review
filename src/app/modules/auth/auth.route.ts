@@ -5,9 +5,11 @@ import { AuthValidation } from './auth.validation'
 
 const router = Router()
 
-router.post('/login', (req, res) => {
-  res.send('Login route')
-})
+router.post(
+  '/login',
+  validateRequest(AuthValidation.loginValidationSchema),
+  AuthController.loginUser,
+)
 
 router.post(
   '/register',
