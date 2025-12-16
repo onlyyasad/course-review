@@ -4,6 +4,7 @@ import { USER_ROLES } from './auth.constant'
 export type TUserRole = (typeof USER_ROLES)[number]
 
 export type TUser = {
+  [x: string]: unknown
   username: string
   email: string
   password: string
@@ -26,6 +27,10 @@ export interface UserModel extends Model<TUser> {
   isPasswordMatched(
     plainTextPassword: string,
     hashedPassword: string,
+  ): Promise<boolean>
+  isNewPasswordMatchedWithOldPasswords(
+    plainTextPassword: string,
+    hashedOldPasswords: string[],
   ): Promise<boolean>
   isJWTIssuedBeforePasswordChange(
     jwtIssuedAt: number,

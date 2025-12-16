@@ -49,6 +49,23 @@ userSchema.statics.isPasswordMatched = async function (
   return isPasswordMatched
 }
 
+userSchema.statics.isNewPasswordMatchedWithOldPasswords = async function (
+  plainTextPassword: string,
+  hashedOldPasswords: string[],
+) {
+  let isPasswordMatched = false
+  if (hashedOldPasswords.length === 0) {
+    return isPasswordMatched
+  }
+  for (const hashedPassword of hashedOldPasswords) {
+    isPasswordMatched = await bcrypt.compare(plainTextPassword, hashedPassword)
+    if (isPasswordMatched) {
+      return isPasswordMatched
+    }
+  }
+  return isPasswordMatched
+}
+
 userSchema.statics.isJWTIssuedBeforePasswordChange = function (
   jwtIssuedAt: number,
   passwordChangedAt?: Date,

@@ -2,6 +2,8 @@ import { Router } from 'express'
 import { AuthController } from './auth.controller'
 import validateRequest from '../../middlewares/validateRequest'
 import { AuthValidation } from './auth.validation'
+import auth from '../../middlewares/auth'
+import { USER_ROLE } from './auth.constant'
 
 const router = Router()
 
@@ -17,8 +19,11 @@ router.post(
   AuthController.createUser,
 )
 
-router.post('/change-password', (req, res) => {
-  res.send('Change Password route')
-})
+router.post(
+  '/change-password',
+  auth(USER_ROLE.user),
+  validateRequest(AuthValidation.passwordChangeValidationSchema),
+  AuthController.changePassword,
+)
 
 export const AuthRoutes = router
