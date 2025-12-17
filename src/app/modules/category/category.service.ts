@@ -12,7 +12,7 @@ const createCategoryIntoDB = async (username: string, payload: TCategory) => {
   if (user) {
     payload.createdBy = user._id
   }
-  const result = await Category.create(payload)
+  const result = (await Category.create(payload)).populate('createdBy')
   return result
 }
 

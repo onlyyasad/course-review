@@ -119,7 +119,7 @@ const createCourseIntoDB = async (username: string, payload: TCourse) => {
     payload.createdBy = user._id
   }
 
-  const result = await Course.create(payload)
+  const result = (await Course.create(payload)).populate('createdBy')
   return result
 }
 
