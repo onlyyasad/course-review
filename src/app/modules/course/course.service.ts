@@ -3,6 +3,8 @@ import { courseSortableFields } from './course.constant'
 import { TCourse, TCourseUpdates, TTag } from './course.interface'
 import { Course } from './course.model'
 import { User } from '../auth/auth.model'
+import AppError from '../../errors/appError'
+import httpStatus from 'http-status'
 
 const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   const {
@@ -158,7 +160,17 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
     updates.$push = pushUpdates
   }
 
-  const result = await Course.findByIdAndUpdate(id, updates, { new: true })
+  const result = await Course.findByIdAndUpdate(id, updates, {
+    new: true,
+  }).populate('createdBy')
+
+  if (!result) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'Course not found or failed to update.',
+    )
+  }
+
   return result
 }
 
