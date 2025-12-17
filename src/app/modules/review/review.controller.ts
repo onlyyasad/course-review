@@ -16,7 +16,10 @@ const getAllReviews = catchAsync(async (req: Request, res: Response) => {
 
 const createReview = catchAsync(async (req: Request, res: Response) => {
   const review = req.body
-  const result = await ReviewService.createReviewIntoDB(review)
+  const user = req.user
+  const username = user?.username
+
+  const result = await ReviewService.createReviewIntoDB(username, review)
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
