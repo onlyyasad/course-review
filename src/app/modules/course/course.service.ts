@@ -100,6 +100,7 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   }
 
   const result = await Course.find(queryFilter)
+    .populate('createdBy')
     .skip(skip)
     .limit(limit)
     .sort(sort)
@@ -187,6 +188,24 @@ const getCourseWithReviewsFromDB = async (id: string) => {
         as: 'reviews',
       },
     },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'createdBy',
+        foreignField: '_id',
+        as: 'createdBy',
+        pipeline: [
+          {
+            $project: {
+              password: 0,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: '$createdBy',
+    },
   ])
 
   return result[0]
@@ -201,6 +220,24 @@ const getBestCourseFromDB = async () => {
         foreignField: 'courseId',
         as: 'reviews',
       },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'createdBy',
+        foreignField: '_id',
+        as: 'createdBy',
+        pipeline: [
+          {
+            $project: {
+              password: 0,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: '$createdBy',
     },
     {
       $addFields: {
