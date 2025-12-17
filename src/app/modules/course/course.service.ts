@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { courseSortableFields } from './course.constant'
 import { TCourse, TCourseUpdates, TTag } from './course.interface'
 import { Course } from './course.model'
+import { User } from '../auth/auth.model'
 
 const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   const {
@@ -112,7 +113,12 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   }
   return data
 }
-const createCourseIntoDB = async (payload: TCourse) => {
+const createCourseIntoDB = async (username: string, payload: TCourse) => {
+  const user = await User.findOne({ username })
+  if (user) {
+    payload.createdBy = user._id
+  }
+
   const result = await Course.create(payload)
   return result
 }
@@ -126,7 +132,6 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
 
   for (const key in updatedData) {
     if (key === 'tags') {
-      // For array fields, use $push or $addToSet as needed
       updates.$push = updates.$push || {}
       updates.$push[key] = updatedData[key]
     } else if (
@@ -134,7 +139,6 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
       updatedData[key] !== null &&
       !Array.isArray(updatedData[key])
     ) {
-      // For nested objects, use dot notation
       const nestedObj = updatedData[key] as Record<string, unknown>
       for (const nestedKey in nestedObj) {
         updates.$set = updates.$set || {}

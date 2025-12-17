@@ -12,6 +12,7 @@ const userSchema = new Schema<TUser>(
     role: { type: String, enum: USER_ROLES, required: true },
     passwordChangedAt: {
       type: Date,
+      select: false,
     },
   },
   { timestamps: true },

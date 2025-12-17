@@ -42,8 +42,10 @@ const getBestCourse = catchAsync(async (req: Request, res: Response) => {
 
 const createCourse = catchAsync(async (req: Request, res: Response) => {
   const course = req.body
+  const user = req.user
+  const username = user?.username
 
-  const result = await CourseServices.createCourseIntoDB(course)
+  const result = await CourseServices.createCourseIntoDB(username, course)
 
   sendResponse(res, {
     success: true,

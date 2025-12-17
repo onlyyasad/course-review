@@ -16,8 +16,12 @@ const getCategories = catchAsync(async (req: Request, res: Response) => {
 
 const createCategory = catchAsync(async (req: Request, res: Response) => {
   const category = req.body
+  const user = req.user
+  const username = user?.username
 
-  const result = await CategoryServices.createCategoryIntoDB(category)
+  const result = await (
+    await CategoryServices.createCategoryIntoDB(username, category)
+  ).populate('createdBy')
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
